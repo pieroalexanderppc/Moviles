@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'menu.dart'; // Importa la pantalla del menú
-import 'rutas.dart'; // Importa la pantalla del menú
-import 'senderismo.dart'; // Importa la pantalla del menú
-import 'yunga.dart'; // Importa la pantalla del menú
-import 'maps.dart'; // Importa la pantalla del menú
+import 'menu.dart';
+import 'rutas.dart';
+import 'senderismo.dart';
+import 'yunga.dart';
+import 'maps.dart';
 import 'profile.dart';
-import '../main.dart'; // Importa el archivo main.dart donde está la clase MyApp
+import '../main.dart';
+
 void main() {
-  runApp(const RelaxPage()); // Ejecuta directamente la página de Relax
+  runApp(const RelaxPage());
 }
 
 class RelaxPage extends StatelessWidget {
@@ -36,101 +37,8 @@ class RelaxPage extends StatelessWidget {
               ),
             ),
           ),
-          leading: PopupMenuButton<String>(
-          icon: const Icon(Icons.menu),
-          onSelected: (String result) {
-            if (result == 'Menu') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MenuPage()),
-              );
-            } else if (result == 'Senderismo') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SenderismoPage()),
-              );
-            } else if (result == 'Relax') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const RelaxPage()),
-              );
-            } else if (result == 'Rutas') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const RutasAccesoPage()),
-              );
-            } else if (result == 'Yunga') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const YungaPage()),
-              );
-            } else if (result == 'GPS') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MapsPage()),
-              );
-            }
-          },
-          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-            const PopupMenuItem<String>(
-              value: 'Menu',
-              child: Text('Menu'),
-            ),
-            const PopupMenuItem<String>(
-              value: 'Senderismo',
-              child: Text('Senderismo'),
-            ),
-            const PopupMenuItem<String>(
-              value: 'Relax',
-              child: Text('Relax'),
-            ),
-            const PopupMenuItem<String>(
-              value: 'Rutas',
-              child: Text('Rutas'),
-            ),
-            const PopupMenuItem<String>(
-              value: 'Yunga',
-              child: Text('Yunga'),
-            ),
-            const PopupMenuItem<String>(
-              value: 'GPS',
-              child: Text('GPS'),
-            ),
-          ],
-        ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: PopupMenuButton<String>(
-                icon: const CircleAvatar(
-                  backgroundImage: AssetImage('assets/usuario.png'), // Asegúrate de tener este archivo en assets
-                ),
-                onSelected: (String result) {
-                  if (result == 'Mi perfil') {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ProfilePage()),
-                  );
-                } else if (result == 'Cerrar sesión') {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MyApp()),
-                  );
-                }
-                },
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                  const PopupMenuItem<String>(
-                    value: 'Mi perfil',
-                    child: Text('Mi perfil'),
-                  ),
-                  const PopupMenuItem<String>(
-                    value: 'Cerrar sesión',
-                    child: Text('Cerrar sesión'),
-                  ),
-                ],
-              ),
-            ),
-          ],
+          leading: _buildPopupMenu(context),
+          actions: [_buildProfileMenu(context)],
         ),
         body: Container(
           decoration: const BoxDecoration(
@@ -146,19 +54,22 @@ class RelaxPage extends StatelessWidget {
                 _buildSection(
                   context,
                   'Baños termales de Putina - Ticaco',
-                  'Explora los relajantes baños termales rodeados de naturaleza.',
+                  'Disfruta de pozas de agua caliente rodeadas de naturaleza.',
                   'assets/banos_termales.jpg',
                   '''
-                  Se mantienen a más de 3200msnm.
+                  Ubicación: 3200 msnm, 13.5 km de Tarata.
+                  Tarifas: S/10.00 (extranjeros) y S/7.00 (nacionales) para pozas; S/5.00 para la piscina.
+                  Ideal para todos, especialmente adultos mayores con reumatismo.
                   ''',
                 ),
                 _buildSection(
                   context,
-                  'Taller de cerámica',
-                  'Descubre la artesanía local y crea tus propias obras de arte.',
+                  'Taller de Cerámica',
+                  'Participa en talleres de cerámica y alfarería.',
                   'assets/taller_ceramica.jpg',
                   '''
-                  Aprende sobre la historia de la cerámica en la región y crea recuerdos únicos.
+                  Ubicado al lado de la plaza principal de Ticaco. 
+                  Aprende técnicas ancestrales y contribuye a la artesanía local.
                   ''',
                 ),
               ],
@@ -169,7 +80,55 @@ class RelaxPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(BuildContext context, String title, String description, String imagePath, String details) {
+  PopupMenuButton<String> _buildPopupMenu(BuildContext context) {
+    return PopupMenuButton<String>(
+      icon: const Icon(Icons.menu),
+      onSelected: (String result) {
+        _navigateToPage(context, result);
+      },
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        const PopupMenuItem(value: 'Menu', child: Text('Menu')),
+        const PopupMenuItem(value: 'Senderismo', child: Text('Senderismo')),
+        const PopupMenuItem(value: 'Relax', child: Text('Relax')),
+        const PopupMenuItem(value: 'Rutas', child: Text('Rutas')),
+        const PopupMenuItem(value: 'Yunga', child: Text('Yunga')),
+        const PopupMenuItem(value: 'GPS', child: Text('GPS')),
+      ],
+    );
+  }
+
+  void _navigateToPage(BuildContext context, String page) {
+    // Implement navigation logic here based on page value
+  }
+
+  PopupMenuButton<String> _buildProfileMenu(BuildContext context) {
+    return PopupMenuButton<String>(
+      icon: const CircleAvatar(
+        backgroundImage: AssetImage('assets/usuario.png'),
+      ),
+      onSelected: (String result) {
+        if (result == 'Mi perfil') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const ProfilePage()),
+          );
+        } else if (result == 'Cerrar sesión') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MyApp()),
+          );
+        }
+      },
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        const PopupMenuItem(value: 'Mi perfil', child: Text('Mi perfil')),
+        const PopupMenuItem(
+            value: 'Cerrar sesión', child: Text('Cerrar sesión')),
+      ],
+    );
+  }
+
+  Widget _buildSection(BuildContext context, String title, String description,
+      String imagePath, String details) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Card(
@@ -224,7 +183,8 @@ class RelaxPage extends StatelessWidget {
                                   padding: const EdgeInsets.all(16.0),
                                   physics: const ClampingScrollPhysics(),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
@@ -236,13 +196,16 @@ class RelaxPage extends StatelessWidget {
                                           ),
                                           Text(
                                             title,
-                                            style: Theme.of(context).textTheme.bodyMedium,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
                                           ),
                                         ],
                                       ),
                                       const SizedBox(height: 8.0),
                                       ClipRRect(
-                                        borderRadius: BorderRadius.circular(15.0),
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
                                         child: Image.asset(
                                           imagePath,
                                           fit: BoxFit.cover,
@@ -253,7 +216,9 @@ class RelaxPage extends StatelessWidget {
                                       Text(
                                         details,
                                         textAlign: TextAlign.justify,
-                                        style: Theme.of(context).textTheme.bodyMedium,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
                                       ),
                                     ],
                                   ),
