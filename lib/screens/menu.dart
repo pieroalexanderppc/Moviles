@@ -1,3 +1,4 @@
+import 'package:aplicacion_boceto/screens/payment_page.dart';
 import 'package:aplicacion_boceto/screens/profile.dart';
 import 'package:aplicacion_boceto/screens/rutas.dart';
 import 'package:aplicacion_boceto/screens/senderismo.dart';
@@ -60,6 +61,11 @@ class MenuPage extends StatelessWidget {
                 context,
                 MaterialPageRoute(builder: (context) => const MapsPage()),
               );
+            }else if (result == 'Pago') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const PaymentPage()),
+              );
             }
           },
           itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -86,6 +92,10 @@ class MenuPage extends StatelessWidget {
             const PopupMenuItem<String>(
               value: 'GPS',
               child: Text('GPS'),
+            ),
+            const PopupMenuItem<String>(
+              value: 'Pago',
+              child: Text('Pago'),
             ),
           ],
         ),
