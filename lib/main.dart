@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Para gestionar el sistema
-import '../screens/menu.dart'; // Asegúrate de que esta pantalla esté definida
+import 'package:flutter/services.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import '../screens/menu.dart';
 
-void main() {
-  // Asegúrate de bloquear la orientación en vertical
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await Firebase.initializeApp(); // Inicializa Firebase
   runApp(const MyApp());
 }
 
@@ -21,7 +24,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.orangeAccent),
         useMaterial3: true,
       ),
-      home: const LoginPage(), // LoginPage como pantalla principal
+      home: const LoginPage(),
     );
   }
 }
@@ -29,38 +32,63 @@ class MyApp extends StatelessWidget {
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
 
+  // Función para manejar el inicio de sesión con Google
+  Future<void> _signInWithGoogle(BuildContext context) async {
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        // El usuario canceló el inicio de sesión
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      // Crear una nueva credencial con el token de Google
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Iniciar sesión con Firebase
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // Navegar a la pantalla de menú después de iniciar sesión
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MenuPage()),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error de inicio de sesión: $error')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Imagen de fondo
           Image.asset(
-            'assets/tarata_fondo.jpg', // Asegúrate de que el archivo esté en la carpeta assets
+            'assets/tarata_fondo.jpg',
             fit: BoxFit.cover,
           ),
           Container(
-            color: Colors.black.withOpacity(0.5), // Oscurece el fondo
+            color: Colors.black.withOpacity(0.5),
           ),
-          // Contenido de la pantalla
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logotipo en la parte superior
               Image.asset(
-                'assets/tarata_logo.png', // Asegúrate de que el archivo esté en la carpeta assets
+                'assets/tarata_logo.png',
                 height: 150,
               ),
               const SizedBox(height: 40),
-              // Botón de inicio de sesión con Google
               ElevatedButton(
-                onPressed: () {
-                  // Lógica del botón de Google
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Funcionalidad de Google no implementada')),
-                  );
-                },
+                onPressed: () => _signInWithGoogle(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black87,
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
@@ -71,10 +99,8 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              // Botón de inicio de sesión con correo electrónico
               ElevatedButton(
                 onPressed: () {
-                  // Lógica del botón de correo electrónico
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Funcionalidad de Correo no implementada')),
                   );
@@ -89,10 +115,8 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              // Botón de inicio de sesión (Sign In)
               ElevatedButton(
                 onPressed: () {
-                  // Navegar a MenuPage (pantalla principal)
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const MenuPage()),
