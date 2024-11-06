@@ -8,6 +8,7 @@ import 'rutas.dart'; // Importa la pantalla del menú
 import 'senderismo.dart'; // Importa la pantalla del menú
 import 'yunga.dart'; // Importa la pantalla del menú
 import '../main.dart'; // Importa el archivo main.dart donde está la clase MyApp
+import 'package:aplicacion_boceto/screens/payment_page.dart';
 
 void main() {
   runApp(const MapsPage());
@@ -109,6 +110,11 @@ class _MapScreenState extends State<MapScreen> {
                 context,
                 MaterialPageRoute(builder: (context) => const MapsPage()),
               );
+            }else if (result == 'Pago') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const PaymentPage()),
+              );
             }
           },
           itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -135,6 +141,10 @@ class _MapScreenState extends State<MapScreen> {
             const PopupMenuItem<String>(
               value: 'GPS',
               child: Text('GPS'),
+            ),
+            const PopupMenuItem<String>(
+              value: 'Pago',
+              child: Text('Pago'),
             ),
           ],
         ),
