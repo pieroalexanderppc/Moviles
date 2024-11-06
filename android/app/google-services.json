@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "571529167047",
+    "project_id": "lab2firebase-5d8b3",
+    "storage_bucket": "lab2firebase-5d8b3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571529167047:android:ab8477ed1c306403923ee2",
+        "android_client_info": {
+          "package_name": "com.firebase.tarata"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571529167047-4f5ducdkunn3unf4iq41h46k3be45d13.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFbeVzoMcUSqq0BrahQDF5lvZ6h5vzJKg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "571529167047-4f5ducdkunn3unf4iq41h46k3be45d13.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "571529167047-i6rqt1oams4hch3h2liqccngr9v3g5nj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.aplicacionBoceto"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
