@@ -25,9 +25,8 @@ android {
     defaultConfig {
         
         applicationId = "com.firebase.tarata"
-        minSdkVersion flutter.minSdkVersion
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdkVersion 23
+        targetSdkVersion 33
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
