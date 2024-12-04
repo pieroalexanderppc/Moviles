@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_icons_null_safety/flutter_icons_null_safety.dart'; // Importa el paquete de íconos
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../screens/menu.dart';
 import '../admin/admihome.dart'; // Importar la pantalla de administrador
+import 'registro.dart'; // Importar la pantalla de registro
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -160,26 +162,43 @@ class LoginPage extends StatelessWidget {
                 height: 150,
               ),
               const SizedBox(height: 40),
-              ElevatedButton(
+              // Botón de Google con ícono de flutter_icons_null_safety
+              ElevatedButton.icon(
                 onPressed: () => _signInWithGoogle(context),
+                icon: const Icon(Icons.report_gmailerrorred, color: Colors.white), // Ícono de Google
+                label: const Text('Ingreso con cuenta Google', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black87,
+                  backgroundColor: Colors.red[700], // Color de fondo de Google
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                ),
-                child: const Text(
-                  'Ingreso con cuenta Google',
-                  style: TextStyle(color: Colors.white),
                 ),
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
+              // Botón de Correo Electrónico con ícono de Flutter
+              ElevatedButton.icon(
                 onPressed: () => _signInWithEmail(context),
+                icon: const Icon(Icons.email, color: Colors.white), // Ícono de correo
+                label: const Text('Ingreso con Correo Electrónico', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black87,
+                  backgroundColor: Colors.blue[700], // Color de fondo del botón
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Botón de Registrarse
+              ElevatedButton(
+                onPressed: () {
+                  // Redirige al registro
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const RegistroPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[700], // Color verde para registrarse
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                 ),
                 child: const Text(
-                  'Ingreso con Correo Electrónico',
+                  'Registrarse',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
