@@ -98,7 +98,40 @@ class RelaxPage extends StatelessWidget {
   }
 
   void _navigateToPage(BuildContext context, String page) {
-    // Implement navigation logic here based on page value
+    switch (page) {
+      case 'Menu':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MenuPage()),
+        );
+        break;
+      case 'Senderismo':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SenderismoPage()),
+        );
+        break;
+      case 'Rutas':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const RutasAccesoPage()),
+        );
+        break;
+      case 'Yunga':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const YungaPage()),
+        );
+        break;
+      case 'GPS':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MapsPage()),
+        );
+        break;
+      default:
+        break;
+    }
   }
 
   PopupMenuButton<String> _buildProfileMenu(BuildContext context) {
