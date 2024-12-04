@@ -1,10 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../screens/menu.dart';
+import '../admin/admihome.dart'; // Importar la pantalla de administrador
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
+
+  // Función para redirigir al usuario según su rol
+  Future<void> _redirectUser(BuildContext context, User user) async {
+    try {
+      // Obtener el documento del usuario desde Firestore
+      final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(user.uid)
+          .get();
+
+      if (userDoc.exists) {
+        final String? role = userDoc['rol'];
+
+        if (role == 'admin') {
+          // Redirigir a AdminHome
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminHome()),
+          );
+        } else if (role == 'usuario') {
+          // Redirigir a MenuPage
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MenuPage()),
+          );
+        } else {
+          throw Exception('Rol no definido');
+        }
+      } else {
+        throw Exception('Documento de usuario no encontrado');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al redirigir usuario: $e')),
+      );
+    }
+  }
 
   // Función para manejar el inicio de sesión con Google
   Future<void> _signInWithGoogle(BuildContext context) async {
@@ -26,13 +65,11 @@ class LoginPage extends StatelessWidget {
       );
 
       // Iniciar sesión con Firebase
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
 
-      // Navegar a la pantalla de menú después de iniciar sesión
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MenuPage()),
-      );
+      // Redirigir según el rol del usuario
+      await _redirectUser(context, userCredential.user!);
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error de inicio de sesión: $error')),
@@ -78,16 +115,15 @@ class LoginPage extends StatelessWidget {
               onPressed: () async {
                 try {
                   // Intentar iniciar sesión con Firebase Auth
-                  await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  final UserCredential userCredential = await FirebaseAuth
+                      .instance
+                      .signInWithEmailAndPassword(
                     email: emailController.text.trim(),
                     password: passwordController.text.trim(),
                   );
 
-                  // Navegar a la pantalla de menú después de iniciar sesión
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MenuPage()),
-                  );
+                  // Redirigir según el rol del usuario
+                  await _redirectUser(context, userCredential.user!);
                 } catch (e) {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
