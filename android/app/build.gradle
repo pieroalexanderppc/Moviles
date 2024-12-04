@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.aplicacion_boceto"
+    namespace = "com.firebase.tarata"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         
-        applicationId = "com.example.aplicacion_boceto"
+        applicationId = "com.firebase.tarata"
         minSdkVersion flutter.minSdkVersion
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion

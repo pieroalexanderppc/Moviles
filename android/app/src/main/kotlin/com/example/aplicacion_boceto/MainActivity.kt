@@ -1,4 +1,4 @@
-package com.example.aplicacion_boceto
+package com.firebase.tarata
 
 import io.flutter.embedding.android.FlutterActivity
 
