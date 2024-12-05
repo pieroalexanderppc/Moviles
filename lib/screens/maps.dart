@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async'; // Necesario para el Completer
+import 'package:geolocator/geolocator.dart'; // Para obtener la ubicación del usuario
 import 'maps.dart'; // Importa la pantalla de mapas
 import 'relax.dart'; // Importa la pantalla de Relax
 import 'menu.dart'; // Importa la pantalla del menú
@@ -8,6 +9,7 @@ import 'rutas.dart'; // Importa la pantalla del menú
 import 'senderismo.dart'; // Importa la pantalla del menú
 import 'yunga.dart'; // Importa la pantalla del menú
 import '../main.dart'; // Importa el archivo main.dart donde está la clase MyApp
+import 'package:aplicacion_boceto/screens/payment_page.dart';
 
 void main() {
   runApp(const MapsPage());
@@ -36,29 +38,90 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+  Position? _currentPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Verificar si los servicios de ubicación están habilitados
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Los servicios de ubicación no están habilitados, no se puede continuar
+      return;
+    }
+
+    // Verificar el permiso de ubicación
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Los permisos están denegados, no se puede continuar
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Los permisos están denegados para siempre, no se puede continuar
+      return;
+    }
+
+    // Obtener la posición actual del usuario
+    Position position = await Geolocator.getCurrentPosition();
+    setState(() {
+      _currentPosition = position;
+      _markers.add(
+        Marker(
+          markerId: MarkerId('mi_ubicacion'),
+          position: LatLng(position.latitude, position.longitude),
+          infoWindow: InfoWindow(title: 'Mi Ubicación'),
+        ),
+      );
+    });
+  }
+
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
 
+  final Set<Marker> _markers = {
+    Marker(
+      markerId: MarkerId('camino_inca'),
+      position: LatLng(-17.473298384128178, -70.03273902200424),
+      infoWindow: InfoWindow(title: 'Camino Inca'),
+    ),
+    Marker(
+      markerId: MarkerId('cuevas_qala_qala'),
+      position: LatLng(-17.468029819268292, -70.0377206851032),
+      infoWindow: InfoWindow(title: 'Cuevas Qala Qala'),
+    ),
+    Marker(
+      markerId: MarkerId('yunga_parque_extremo'),
+      position: LatLng(-17.476600713977973, -70.04102428839693),
+      infoWindow: InfoWindow(title: 'Yunga Parque Extremo'),
+    ),
+    Marker(
+      markerId: MarkerId('banos_termales_putina_ticaco'),
+      position: LatLng(-17.43414200794719, -70.0383996902475),
+      infoWindow: InfoWindow(title: 'Baños Termales de Putina Ticaco'),
+    ),
+    Marker(
+      markerId: MarkerId('taller_ceramica_alfebreria'),
+      position: LatLng(-17.4444429341109, -70.0478549883975),
+      infoWindow: InfoWindow(title: 'Taller de Cerámica y Alfarería'),
+    ),
+  };
+
   static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(-12.0464, -77.0428), // Cambié las coordenadas a las tuyas
+    target: LatLng(-17.473298384128178, -70.03273902200424), // Ajusta la posición inicial
     zoom: 14.0,
   );
 
-  static const CameraPosition _kLake = CameraPosition(
-    bearing: 192.8334901395799,
-    target: LatLng(37.43296265331129, -122.08832357078792),
-    tilt: 59.440717697143555,
-    zoom: 19.151926040649414,
-  );
-
   int _currentIndex = 0;
-
-  List<String> savedPlaces = ['Lugar A', 'Lugar B'];
-  List<String> favoritePlaces = ['Lugar C', 'Lugar D'];
-
-  Future<void> _goToTheLake() async {
-    final GoogleMapController controller = await _controller.future;
-    await controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +172,11 @@ class _MapScreenState extends State<MapScreen> {
                 context,
                 MaterialPageRoute(builder: (context) => const MapsPage()),
               );
+            } else if (result == 'Pago') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const PaymentPage()),
+              );
             }
           },
           itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -135,6 +203,10 @@ class _MapScreenState extends State<MapScreen> {
             const PopupMenuItem<String>(
               value: 'GPS',
               child: Text('GPS'),
+            ),
+            const PopupMenuItem<String>(
+              value: 'Pago',
+              child: Text('Pago'),
             ),
           ],
         ),
@@ -175,49 +247,14 @@ class _MapScreenState extends State<MapScreen> {
                 GoogleMap(
                   mapType: MapType.normal,
                   initialCameraPosition: _kGooglePlex,
+                  markers: _markers,
                   onMapCreated: (GoogleMapController controller) {
                     _controller.complete(controller);
                   },
                 ),
-                Positioned(
-                  top: 20,
-                  left: 20,
-                  right: 20,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 10,
-                        ),
-                      ],
-                    ),
-                    child: const TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Ingresa tu búsqueda',
-                        prefixIcon: Icon(Icons.search),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 15),
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 20,
-                  right: 20,
-                  child: FloatingActionButton.extended(
-                    onPressed: _goToTheLake,
-                    label: const Text('To the lake!'),
-                    icon: const Icon(Icons.directions_boat),
-                  ),
-                ),
               ],
             )
-          : _currentIndex == 1
-              ? _buildSavedPlaces()
-              : _buildFavoritePlaces(),
+          : _buildSavedPlaces(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -234,10 +271,6 @@ class _MapScreenState extends State<MapScreen> {
             icon: Icon(Icons.bookmark_border, color: Colors.black),
             label: 'Guardado',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star_border, color: Colors.yellow),
-            label: 'Favoritos',
-          ),
         ],
         selectedItemColor: Colors.red,
         unselectedItemColor: Colors.black,
@@ -247,22 +280,26 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildSavedPlaces() {
+    List<Marker> markersList = _markers.toList();
     return ListView.builder(
-      itemCount: savedPlaces.length,
+      itemCount: markersList.length,
       itemBuilder: (context, index) {
         return ListTile(
-          title: Text(savedPlaces[index]),
-        );
-      },
-    );
-  }
-
-  Widget _buildFavoritePlaces() {
-    return ListView.builder(
-      itemCount: favoritePlaces.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(favoritePlaces[index]),
+          title: Text(markersList[index].infoWindow.title ?? 'Lugar sin nombre'),
+          onTap: () async {
+            final GoogleMapController controller = await _controller.future;
+            await controller.animateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(
+                  target: markersList[index].position,
+                  zoom: 18.0,
+                ),
+              ),
+            );
+            setState(() {
+              _currentIndex = 0;
+            });
+          },
         );
       },
     );
